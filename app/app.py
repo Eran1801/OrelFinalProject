@@ -11,7 +11,7 @@ from utils import check_valid_password, send_email, update_table_name
 
 sys.stdout = open('stdout.log', 'w')
 
-DATABASE = os.path.join('Tables', 'Emergenshe.db')
+DATABASE = os.path.join('../', 'Tables', 'Emergenshe.db')
 
 app = Flask(__name__)
 app.config['DATABASE'] = DATABASE
@@ -272,7 +272,8 @@ def get_call_status():
         if call:
             call_id, call_status, other_party_name = call
             print(f"User call status: {call_status}, Volunteer: {other_party_name}")  # הוספת לוג
-            return jsonify({'success': True, 'status': call_status, 'call_id': call_id, 'other_party_name': other_party_name})
+            return jsonify(
+                {'success': True, 'status': call_status, 'call_id': call_id, 'other_party_name': other_party_name})
 
     # Check if the email belongs to a volunteer
     cursor.execute("SELECT ID FROM Volunteers_list WHERE email = ?", (email,))
@@ -290,11 +291,11 @@ def get_call_status():
         if call:
             call_id, call_status, other_party_name = call
             print(f"Volunteer call status: {call_status}, User: {other_party_name}")  # הוספת לוג
-            return jsonify({'success': True, 'status': call_status, 'call_id': call_id, 'other_party_name': other_party_name})
+            return jsonify(
+                {'success': True, 'status': call_status, 'call_id': call_id, 'other_party_name': other_party_name})
 
     print("No ongoing call found")  # הוספת לוג
     return jsonify({'success': False, 'error': 'No ongoing call found'})
-
 
 
 @app.route('/answer_call', methods=['POST'])
@@ -390,8 +391,6 @@ def accept_call():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
-
-
 @app.route('/reject_call', methods=['POST'])
 def reject_call():
     volunteer_id = session.get('current_volunteer', {}).get('id')
@@ -434,14 +433,14 @@ def check_for_incoming_call():
         volunteer_id = request.json.get('volunteer_id')
         if not volunteer_id:
             return jsonify({'incoming_call': False})
-        
+
         db = get_db()
         cursor = db.cursor()
-        
+
         # Check if the volunteer is available (is timing)
         if not session.get(f"volunteer_{volunteer_id}_is_timing"):
             return jsonify({'incoming_call': False})
-        
+
         cursor.execute("""
             SELECT c.ID, u.first_name
             FROM Calls c
@@ -483,13 +482,13 @@ def trigger_volunteer_incoming_call():
 def call_ongoing_user():
     email = session.get('email').lower()
     user_id = session.get('user_id')
-    
+
     if not email or not user_id:
         return redirect(url_for('user_login'))
-    
+
     con = get_db()
     cursor = con.cursor()
-    
+
     cursor.execute("""
         SELECT c.ID, v.first_name
         FROM Calls c
@@ -499,10 +498,10 @@ def call_ongoing_user():
         LIMIT 1
     """, (user_id,))
     call = cursor.fetchone()
-    
+
     if not call:
         return redirect(url_for('main_user_page'))
-    
+
     call_id, volunteer_first_name = call
 
     # Update the call status to notify that the user is waiting for a volunteer
@@ -525,8 +524,9 @@ def call_ongoing_user():
             session['user_first_name'] = user_first_name
         else:
             return redirect(url_for('user_login'))
-    
-    return render_template('call_ongoing_user.html', user_first_name=user_first_name, volunteer_first_name=volunteer_first_name)
+
+    return render_template('call_ongoing_user.html', user_first_name=user_first_name,
+                           volunteer_first_name=volunteer_first_name)
 
 
 @app.route('/leave_call_ongoing_user')
@@ -631,17 +631,17 @@ def user_login():
     if request.method == 'POST':
         email = request.form.get('email').lower()
         password = request.form.get('password')
-        
+
         con = get_db()
         cursor = con.cursor()
-        
+
         print(f"Trying to login user with email: {email}")
-        
+
         user_data = cursor.execute("SELECT Email, UserType FROM login_type WHERE Email=?", (email,)).fetchone()
         if user_data:
             user_type = user_data[1]
             print(f"User type found: {user_type}")
-            
+
             if user_type == 'User':
                 user_info = cursor.execute(
                     "SELECT password, ID, first_name, written_code, spoken_code FROM Users WHERE email=?",
@@ -654,7 +654,8 @@ def user_login():
                     return redirect(url_for('main_user_page'))
 
             elif user_type == 'Volunteer':
-                volunteer_info = cursor.execute("SELECT password, ID, first_name FROM Volunteers_list WHERE email=?", (email,)).fetchone()
+                volunteer_info = cursor.execute("SELECT password, ID, first_name FROM Volunteers_list WHERE email=?",
+                                                (email,)).fetchone()
                 if volunteer_info and volunteer_info[0] == password:
                     session['email'] = email
                     session['user_id'] = volunteer_info[1]
@@ -674,7 +675,8 @@ def user_login():
                     return redirect(url_for('main_contact'))
 
             elif user_type == 'Association Manager':
-                manager_info = cursor.execute("SELECT password, ID, first_name FROM Manager WHERE email=?", (email,)).fetchone()
+                manager_info = cursor.execute("SELECT password, ID, first_name FROM Manager WHERE email=?",
+                                              (email,)).fetchone()
                 if manager_info and manager_info[0] == password:
                     session['email'] = email
                     session['user_id'] = manager_info[1]
@@ -832,11 +834,12 @@ def contact_sign_up():
 
                 cursor.execute(
                     "UPDATE contact_list SET First_Name=?, Last_Name=?, Phone_Number=?, Password=?, is_active=? WHERE Email=?",
-                    (First_Name, Last_Name, Phone_Number, Password, 'active', Email))
+                    (First_Name, Last_Name, Phone_Number, Password, 'active', Email.lower()))
+
+                cursor.execute(
+                    "UPDATE Users SET ContactID=? WHERE ID=?",
+                    (existing_id, existing_user_id))
                 con.commit()
-                print(
-                    f"Updated contact: ID={existing_id}, UserID={existing_user_id}, First_Name={First_Name}, Last_Name={Last_Name}, "
-                    f"Phone_Number={Phone_Number}, Email={Email}, Password={Password}")
 
                 cursor.close()
                 return redirect(url_for('user_login'))
@@ -1121,7 +1124,6 @@ def contact_update():
     return render_template('contact_update.html')
 
 
-
 @app.route('/volunteers_hours_summary_report')
 def volunteers_hours_summary_report():
     sql_query = '''
@@ -1304,7 +1306,6 @@ def main_volunteer_page():
             return "Volunteer details not found."
     else:
         return redirect(url_for('user_login'))
-
 
 
 @app.route('/main_association')
@@ -1626,7 +1627,8 @@ def delete_contact():
             cursor.close()
             return jsonify({'success': True})
         else:
-            return jsonify({'success': False, 'error': 'User details not found. Please complete registration first.'}), 400
+            return jsonify(
+                {'success': False, 'error': 'User details not found. Please complete registration first.'}), 400
     else:
         return jsonify({'success': False, 'error': 'Not logged in'}), 401
 
@@ -1657,7 +1659,8 @@ def contact_user_update():
             cursor.close()
             return jsonify({'success': True})
         else:
-            return jsonify({'success': False, 'error': 'User details not found. Please complete registration first.'}), 400
+            return jsonify(
+                {'success': False, 'error': 'User details not found. Please complete registration first.'}), 400
     else:
         return jsonify({'success': False, 'error': 'Not logged in'}), 401
 
@@ -1923,7 +1926,6 @@ def call_receive():
     user_first_name = request.args.get('user_first_name')
     print(f"Session data on call_receive: {session}")
     return render_template('call_receive.html', user_first_name=user_first_name)
-
 
 
 if __name__ == '__main__':
