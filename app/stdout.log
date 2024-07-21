@@ -1,9 +1,2 @@
-Returning to first page, clearing session for user: eranlevy9@gmail.com
-Session cleared
-Contacts fetched for eranlevy9@gmail.com: []
+Error: (432, b'4.3.2 Concurrent connections limit exceeded. Visit https://aka.ms/concurrent_sending for more information. [Hostname=LO2P123MB7115.GBRP123.PROD.OUTLOOK.COM]')
 Email sent successfully
-Contacts fetched for eranlevy9@gmail.com: [(25150, 952546, 'Eran', 'Levy', '0544743312', 'eran.levy1@msmail.ariel.ac.il', None, 'inactive')]
-Form data received: First_Name=Eran, Last_Name=Levy, Phone_Number=0544743313, Email=Eran.levy1@msmail.ariel.ac.il, Password=Eran1302, Confirm_Password=Eran1302
-Trying to login user with email: eranlevy9@gmail.com
-User type found: User
-User eranlevy9@gmail.com logged in successfully with user_id 952546

@@ -48,6 +48,7 @@
         }
 
         let recognition;
+        let isSafeWordDetected = false; // Flag to ensure actions are executed only once
         const safeWord = "{{ user_written_code }}";
 
         if (safeWord && 'webkitSpeechRecognition' in window) {
@@ -69,7 +70,9 @@
 
                 if (transcript.trim().includes(safeWord)) {
                     console.log('מילת הקוד זוהתה');
-                    startCallToVolunteer();
+                    isSafeWordDetected = true; // Set the flag to prevent further actions
+                    checkForContactAndHandle(); // Check for contact and handle accordingly
+                    recognition.stop(); // Stop recognition to prevent further detections
                 }
             };
 
@@ -90,6 +93,36 @@
             };
 
             recognition.start();
+
+            function checkForContactAndHandle() {
+                fetch('/check_contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: "{{ session.email }}" })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.contact_email) {
+                        alert("Email sent to contact: " + data.contact_email);
+                        recognition.stop();
+                    } else if (!data.success) {
+                        if (data.error === 'User not found') {
+                            alert("Error: User not found. Please register first.");
+                        } else if (data.error === 'No contact found') {
+                            startCallToVolunteer(); // Proceed with starting the call to the volunteer if no contact is found
+                        } else {
+                            console.error("Error: " + data.error);
+                            alert("An error occurred: " + data.error);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while checking for contact.');
+                });
+            }
 
             function startCallToVolunteer() {
                 fetch('/start_call', {

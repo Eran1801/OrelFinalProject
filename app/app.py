@@ -879,6 +879,38 @@ def show_contact_profile(contact_id):
         return redirect(url_for('contact_sign_up'))
 
 
+@app.route('/check_contact', methods=['POST'])
+def check_contact():
+    try:
+        email = request.json.get('email')
+        db = get_db()
+        cursor = db.cursor()
+
+        # Retrieve user_id from email
+        cursor.execute("SELECT ID FROM Users WHERE email = ?", (email.lower(),))
+        user = cursor.fetchone()
+        if not user:
+            return jsonify({'success': False, 'error': 'User not found'})
+
+        user_id = user[0]
+
+        # Check if contact exists
+        cursor.execute("SELECT Email FROM contact_list WHERE UserID = ?", (user_id,))
+        contact = cursor.fetchone()
+        if contact:
+            contact_email = contact[0]
+            subject = 'Alert For Help'
+            message = 'Your contact needs help. Give her a call'
+            send_email(subject, message, contact_email)
+            return jsonify({'success': True, 'contact_email': contact_email})
+        else:
+            return jsonify({'success': False, 'error': 'No contact found'})
+
+    except Exception as e:
+        print(f"Error in check_contact: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @app.route('/main_contact')
 def main_contact():
     if 'email' in session:
