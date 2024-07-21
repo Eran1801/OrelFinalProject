@@ -1,3 +1,4 @@
+import logging
 from flask import Flask, request, render_template, redirect, url_for, g, session, jsonify, flash
 import sqlite3
 import datetime
@@ -10,6 +11,9 @@ import os
 from utils import check_valid_password, send_email, update_table_name
 
 sys.stdout = open('stdout.log', 'w')
+
+# Set up logging configuration
+logging.basicConfig(level=logging.DEBUG)
 
 DATABASE = os.path.join('../', 'Tables', 'Emergenshe.db')
 
@@ -51,8 +55,9 @@ def logout():
 
 @app.route('/get_user_type')
 def get_user_type():
-    email = session.get('email').lower()
+    email = session.get('email')
     if email:
+        email = email.lower()
         con = get_db()
         cursor = con.cursor()
         cursor.execute("SELECT UserType FROM login_type WHERE Email=?", (email,))
@@ -144,12 +149,12 @@ def set_availability():
 @app.route('/start_call', methods=['POST'])
 def start_call():
     try:
-        email = request.json.get('email').lower()
+        email = request.json.get('email')
         print(f"Starting call for email: {email}")
         db = get_db()
         cursor = db.cursor()
 
-        cursor.execute("SELECT ID, first_name FROM Users WHERE email = ?", (email,))
+        cursor.execute("SELECT ID, first_name FROM Users WHERE email = ?", (email.lower(),))
         user = cursor.fetchone()
         if not user:
             print("User not found")
@@ -895,7 +900,7 @@ def check_contact():
         user_id = user[0]
 
         # Check if contact exists
-        cursor.execute("SELECT Email FROM contact_list WHERE UserID = ?", (user_id,))
+        cursor.execute("SELECT Email FROM contact_list WHERE UserID = ? and is_active!='deleted'", (user_id,))
         contact = cursor.fetchone()
         if contact:
             contact_email = contact[0]
@@ -1613,17 +1618,17 @@ def user_rating():
 @app.route('/users_contact')
 def users_contact():
     if 'email' in session:
-        email = session['email'].lower()
+        email = session['email']
         conn = get_db()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT ID FROM Users WHERE email=?", (email,))
+        cursor.execute("SELECT ID FROM Users WHERE email=?", (email.lower(),))
         user_data = cursor.fetchone()
         if user_data:
             user_id = str(user_data[0])
             session['user_id'] = user_id
 
-            query = "SELECT * FROM contact_list WHERE UserID=? AND is_active!='deleted'"
+            query = "SELECT * FROM contact_list WHERE UserID=? AND is_active != 'deleted'"
             cursor.execute(query, (user_id,))
             contacts = cursor.fetchall()
 
@@ -1640,20 +1645,19 @@ def users_contact():
 @app.route('/delete_contact', methods=['POST'])
 def delete_contact():
     if 'email' in session:
-        email = session['email'].lower()
+        email = session['email']
         conn = get_db()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT ID FROM Users WHERE email=?", (email,))
+        cursor.execute("SELECT ID FROM Users WHERE email=?", (email.lower(),))
         user_data = cursor.fetchone()
         if user_data:
             user_id = str(user_data[0])
             session['user_id'] = user_id
 
-            contact_id = request.json.get('contact_id')
+            logging.debug(f'user_id - {user_id}')
 
-            query = "UPDATE contact_list SET is_active='deleted' WHERE ID=? AND UserID=?"
-            cursor.execute(query, (contact_id, user_id))
+            cursor.execute("UPDATE contact_list SET is_active='deleted' WHERE UserID=?", (user_id,))
             conn.commit()
 
             cursor.close()
