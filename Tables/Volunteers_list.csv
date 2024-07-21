@@ -1,0 +1,11 @@
+﻿ID,first_name,last_name,phone_number,email,password,registration_date,test_status
+1,Sarah,Miller,5552223333,sarah@example.com,volpass,01/01/2024,CHECKED
+2,John,Smith,4443332222,john@example.com,pass123,02/01/2024,UNCHECKED
+3,Emily,Johnson,3334445555,emily@example.com,secret,03/01/2024,CHECKED
+4,Michael,Brown,2225556666,michael@example.com,qwerty,04/01/2024,UNCHECKED
+5,Ashley,Davis,1116667777,ashley@example.com,abc123,05/01/2024,CHECKED
+6,Kevin,Wilson,6667778888,kevin@example.com,p@ssw0rd,06/01/2024,UNCHECKED
+7,Jessica,Lee,7778889999,jessica@example.com,letmein,07/01/2024,CHECKED
+8,Daniel,Martinez,8889990000,daniel@example.com,welcome,08/01/2024,UNCHECKED
+9,Megan,Taylor,9990001111,megan@example.com,mypass,09/01/2024,CHECKED
+10,Daniel,Anderson,1112222,daniel@example.com,passpass,10/01/2024,CHECKED

@@ -1,0 +1,26 @@
+<!-- terms_of_use.html -->
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תנאי שימוש</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body dir="rtl">
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Description of the image" width="320" height="100">
+        <h2>תנאי שימוש</h2>
+        <p>טקסט כאן על תנאי השימוש וההגבלות של האפליקציה.</p>
+        <button class="redirect-button" onclick="redirectToSignUp()">בחזרה להרשמה</button>
+    </div>
+
+
+    <script>
+
+        function redirectToSignUp() {
+            window.location.href = "user_sign_up";
+        }
+    </script>
+</body>
+</html>

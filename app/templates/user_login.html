@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>כניסה</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body dir="rtl">
+<div class="container">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Description of the image" width="320" height="100">
+    <h2>ברוכים הבאים לחנות שלנו</h2>
+    <h3>התחברות </h3>
+    <form action="/user_login" method="post">
+        <input type="text" name="email" placeholder="כתובת מייל" required>
+        <input type="password" name="password" placeholder="סיסמא" required>
+        <button class="redirect-button" onclick="redirectToMain()">כניסה</button>
+    </form>
+    <button onclick="redirectToForgotPassword()">שכחתי סיסמה</button>
+
+</div>
+
+<script>
+    function redirectToForgotPassword() {
+        window.location.href = "{{ url_for('forgot_password') }}";
+    }
+
+
+    function redirectToMain() {
+        // Send an asynchronous request to fetch the user type from the server
+        fetch("/get_user_type")
+            .then(response => response.text())
+            .then(userType => {
+                // Redirect based on the user type
+                switch (userType) {
+                    case "User":
+                        window.location.href = "main_user_page";
+                        break;
+                    case "Volunteer":
+                        window.location.href = "main_volunteer_page";
+                        break;
+                    case "Contact":
+                        window.location.href = "main_contact"; // Adjust the URL to the contact main page
+                        break;
+                    case "Association Manager":
+                        window.location.href = "main_association"; // Adjust the URL to the association manager main page
+                        break;
+                    default:
+                        console.error('Unknown user type:', userType);
+                        break;
+                }
+            })
+            .catch(error => console.error('Error:', error))
+    }
+</script>
+</body>
+</html>

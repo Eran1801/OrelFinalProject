@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הרשמה</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: white;
+            border: 1px solid #ccc;
+            z-index: 1000;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .popup button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body dir="rtl">
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="תיאור התמונה" width="320" height="100">
+        <h2>Welcome to our store</h2>
+        <h3>רישום משתמשת</h3>
+        <form action="/user_sign_up" method="post" onsubmit="return validateForm()">
+            <input type="text" name="first_name" placeholder="שם פרטי">
+            <input type="text" name="last_name" placeholder="שם משפחה">
+            <input type="text" name="phone_number" id="phoneInput" placeholder="נייד" required>
+            <div id="phoneError" style="color: red;"></div>
+            <input type="text" name="email" placeholder="כתובת מייל" required>
+            <input type="password" name="password" id="password" placeholder="סיסמא" required>
+            <input type="password" name="confirm_password" id="confirmPassword" placeholder="אימות סיסמא" required>
+            <div id="passwordError" style="color: red;"></div>
+            <button class="redirect-button" type="button" onclick="showTermsPopup()">תקנון</button>
+            <div class="button-container">
+                <input type="checkbox" id="termsCheckbox" required>
+                <label for="termsCheckbox">קראתי ואני מסכים/ה לתנאי השימוש</label>
+            </div>
+            <button class="redirect-button1" type="submit">הרשמה</button>
+            <div class="button-container">
+                <button class="button_final" type="button" onclick="redirectToLogin()">כבר רשומה? התחברי</button>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="popup-overlay" id="popupOverlay"></div>
+    <div class="popup" id="popup">
+        <p id="popupMessage"></p>
+        <button onclick="closePopup()">סגור</button></div>
+
+    <script>
+        function showTermsPopup() {
+            const termsText = "תנאי שימוש<br>טקסט כאן על תנאי השימוש וההגבלות של האפליקציה.";
+            showPopup(termsText);
+        }
+
+        function showPopup(message) {
+            document.getElementById('popupMessage').innerHTML = message;
+            document.getElementById('popupOverlay').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popupOverlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        function confirmTerms() {
+            if (document.getElementById('termsCheckbox').checked) {
+                if (window.confirm("תודה על הסכמתך לתנאי השימוש שלנו!")) {
+                    return true;
+                }
+            } else {
+                alert("אנא אשר/י את התקנון");
+            }
+            return false;
+        }
+
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const passwordError = document.getElementById('passwordError');
+
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasNumber = /\d/.test(password);
+
+            if (password.length < 6) {
+                passwordError.textContent = 'הסיסמא חייבת להכיל לפחות 6 תווים.';
+                return false;
+            }
+
+            if (!hasUpperCase || !hasLowerCase || !hasNumber) {
+                passwordError.textContent = 'הסיסמא חייבת להכיל לפחות אות גדולה באנגלית, אות קטנה באנגלית וספרות.';
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                passwordError.textContent = 'הסיסמאות אינן תואמות.';
+                return false;
+            }
+
+            passwordError.textContent = '';
+            return confirmTerms();
+        }
+
+        const phoneInput = document.getElementById('phoneInput');
+        const phoneError = document.getElementById('phoneError');
+
+        phoneInput.addEventListener('input', function() {
+            const phonePattern = /^[0-9-]+$/;
+            const inputValue = phoneInput.value.trim();
+
+            if (!phonePattern.test(inputValue)) {
+                phoneError.textContent = 'יש להזין מספרים בלבד';
+                phoneInput.setCustomValidity('יש להזין מספרים בלבד');
+            } else {
+                phoneError.textContent = '';
+                phoneInput.setCustomValidity('');
+            }
+        });
+    </script>
+
+    {% if error_message %}
+    <script>
+        showPopup("{{ error_message }}");
+    </script>
+    {% endif %}
+</body>
+</html>

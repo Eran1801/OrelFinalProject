@@ -1,0 +1,11 @@
+ID,UserID,First_Name,Last_Name,Phone_Number,Email,password,is_active
+1,1,Mary,Johnson,5551112222,mary1@example.com,mary1,active
+2,2,Michael,Williams,4442223333,michael2@example.com,michael2,active
+3,3,Sarah,Brown,3335556666,sarah3@example.com,sarah3,active
+4,4,Chris,Taylor,2223334444,chris4@example.com,chris4,active
+5,5,Emily,Garcia,1114445555,emily5@example.com,emily5,active
+6,6,Kevin,Martinez,6669998888,kevin6@example.com,kevin6,active
+7,7,Ashley,Anderson,7778889999,ashley7@example.com,ashley7,active
+8,8,Jessica,Thomas,8887776666,jessica8@example.com,jessica8,active
+9,9,Daniel,Hernandez,9998887777,daniel9@example.com,daniel9,active
+10,10,Megan,Lopez,1234567890,megan99@example.com,megan10,active

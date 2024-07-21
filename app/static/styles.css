@@ -1,0 +1,258 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 300px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.container1 {
+    width: 900px; /* שינוי רוחב המיכל הראשי */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.container2 {
+    width: 500px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+h2, h3 {
+    color: #333;
+}
+
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+button {
+    cursor: pointer;
+    background-color: #FFD1Dc;
+    color: #000;
+    display: block;
+    font-weight: bold; /* כתיבת הטקסט בכביכולד */
+}
+
+button + button {
+    margin-top: 10px;
+}
+
+.signup-button {
+    background-color: #FFD1Dc;
+    color: #000;
+}
+
+.redirect-button {
+    background-color: #FFD1Dc;
+    color: #000;
+    font-weight: bold;
+    display: block;
+    margin: 10px auto;
+}
+
+.redirect-button1 {
+    background-color: #FFFFFF;
+    color: #000;
+    font-weight: bold;
+    display: block;
+    margin: 10px auto;
+    font-size:16px; /* גודל פונט גדול */
+
+}
+.redirect-button2 {
+    /* Add your original button styles here */
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+.redirect-button3 {
+    /* Add your original button styles here */
+    background-color: #5E3B97;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+/* קבוצת הכפתורים */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+/* כפתורים */
+.button_final {
+    width: 100%;
+    background-color: #FFFFFF;  /* כחול בולד */
+    color: #3b5998;   /* צבע טקסט לבן */
+    font-weight: bold;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button_final:hover {
+    background-color: #FFD1Dc;  /* שינוי צבע בעטיפת העכבר */
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px; /* על מנת להוסיף מרווח בין ה-checkbox והכפתור */
+}
+
+.checkbox-container input {
+    margin-right: 10px; /* על מנת להוסיף מרווח בין ה-checkbox ל-label */
+}
+
+.button-container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+}
+
+.forgot-password {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+        background-color: #FFFFFF;  /* כחול בולד */
+
+}
+
+.star-container {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.star {
+    font-size: 30px;
+    color: #ccc;
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+.star:hover:before,
+.star:hover ~ .star:before {
+    content: '\2605';
+    color: #ffcc00;
+}
+
+.star:before {
+    content: '\2606'; /* הגדרת התוכן של הכוכב להיות כוכב ריק */
+}
+
+input[type="radio"]:checked ~ .star:before {
+    content: '\2605';
+    color: #ffcc00;
+}
+
+/* כוכב שמופיע תמיד */
+.star-container .star-always:before {
+    content: '\2605';
+    color: #ffcc00;
+}
+/* styles.css */
+#userFeedback {
+    width: 100%;
+    display: block;
+    margin: 0 auto;
+}
+
+
+#contact-container {
+    width: 600px; /* שינוי הרוחב של המיכל */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#contact-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+
+#contact-table2 {
+    width: 100%;
+    max-width: calc(100% - 40px); /* Adjust this value to leave space for padding */
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+#contact-table th, #contact-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background: white;
+    border: 1px solid #ccc;
+    z-index: 1000;
+}

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main User Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body dir="rtl">
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Description of the image" width="320" height="100">
+        <h2>ברוכה הבאה, {{ user_first_name }}</h2>
+        {% if not user_written_code or not user_spoken_code %}
+            <p style="color: red;">אין מילת קוד מוגדרת, בבקשה תגדירי כדי שנוכל לסייע בשעת הצורך</p>
+        {% endif %}
+        <button class="redirect-button" onclick="redirectToCodeUpdate()">עדכון מילת קוד</button>
+        <button class="redirect-button" onclick="redirectToContactUpdate()">עדכון איש קשר</button>
+        <button class="redirect-button" onclick="redirectToUserRating()">דירוג חווית משתמש</button>
+        <button class="redirect-button" onclick="redirectToUserupdate()">עדכון פרטי משתמשת</button>
+        <button class="redirect-button" onclick="redirectToUserpassword()">עדכון סיסמא</button>
+        <button class="button_final" onclick="logout()">התנתקות</button>
+    </div>
+
+    <script>
+        function redirectToCodeUpdate() {
+            window.location.href = "code_update";
+        }
+
+        function redirectToContactUpdate() {
+            window.location.href = "users_contact";
+        }
+        
+        function redirectToUserupdate() {
+            window.location.href = "update_user";
+        }
+        
+        function redirectToUserpassword() {
+            window.location.href = "change_password";
+        }
+
+        function redirectToUserRating() {
+            window.location.href = "user_rating";
+        }
+
+        function logout() {
+            window.location.href = "user_login";
+        }
+
+        let recognition;
+        const safeWord = "{{ user_written_code }}";
+
+        if (safeWord && 'webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'he-IL';
+
+            recognition.onstart = function() {
+                console.log('זיהוי קולי התחיל');
+            };
+
+            recognition.onresult = function(event) {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    transcript += event.results[i][0].transcript;
+                }
+                console.log('תמלול:', transcript.trim());
+
+                if (transcript.trim().includes(safeWord)) {
+                    console.log('מילת הקוד זוהתה');
+                    startCallToVolunteer();
+                }
+            };
+
+            recognition.onerror = function(event) {
+                console.error('שגיאה בזיהוי קולי', event);
+                if (event.error === 'no-speech') {
+                    console.log('לא זוהה דיבור, אנא נסה שוב.');
+                    alert('לא זוהה דיבור, אנא נסי שוב.');
+                } else if (event.error === 'not-allowed') {
+                    console.log('זיהוי קולי לא מורשה, בבקשה תאפשרי את הזיהוי הקולי בהגדרות הדפדפן.');
+                    alert('זיהוי קולי לא מורשה, בבקשה תאפשרי את הזיהוי הקולי בהגדרות הדפדפן.');
+                }
+            };
+
+            recognition.onend = function() {
+                console.log('זיהוי קולי הסתיים');
+                recognition.start();
+            };
+
+            recognition.start();
+
+            function startCallToVolunteer() {
+                fetch('/start_call', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: "{{ session.email }}" })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = "call_ongoing_user";
+                    } else {
+                        alert(data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while starting the call.');
+                });
+            }
+        } else {
+            console.log('זיהוי קולי אינו נתמך בדפדפן זה');
+        }
+    </script>
+</body>
+</html>

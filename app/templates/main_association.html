@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>עמוד ראשי למנהל עמותה</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body dir="rtl">
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo2.png') }}" alt="תיאור התמונה" width="320" height="100">
+        <h2>ברוך הבא</h2>
+        <button class="redirect-button3" onclick="redirectToVolunteerHoursSummaryReport()">שעות פעילות מתנדבים</button>
+        <button class="redirect-button3" onclick="redirectToUsersReport()">צפיה בדוח משתמשות</button>
+        <button class="redirect-button3" onclick="redirectToNewVolunteers()">מתנדבים חדשים</button>
+        <button class="redirect-button3" onclick="redirectToUserpassword()">עדכון סיסמא</button>
+        <button class="button_final" onclick="logout()">התנתקות</button>
+        <img src="{{ url_for('static', filename='amuta.png') }}" alt="Description of the image" width="320" height="100">
+    </div>
+
+    <script>
+        function redirectToVolunteerHoursSummaryReport() {
+            window.location.href = "volunteers_hours_summary_report";
+        }
+
+        function redirectToUsersReport() {
+            window.location.href = "users_report";
+        }
+
+        function redirectToNewVolunteers() {
+            window.location.href = "new_volunteers";
+        }
+        function redirectToUserpassword() {
+            window.location.href = "change_password";
+        }
+
+        function logout() {
+            // הוספת פעולות התנתקות כאן
+            window.location.href = "user_logout"; // לדוגמה, ייתכן שזה יבוצע דרך ראוטינג בשרת
+        }
+    </script>
+</body>
+</html>
+

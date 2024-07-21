@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דירוג האפליקציה</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body dir="rtl">
+<form action="{{ url_for('user_rating') }}" method="POST" id="rating-form">
+    <div class="container">
+        <h2>דירוג משתמשת</h2>
+        <p style="text-align: center;">אנא דרגי את חווייתך באפליקציה</p>
+        <div class="star-container">
+            <input type="radio" id="star1" name="rating" value="5">
+            <label class="star" for="star1"></label>
+            <input type="radio" id="star2" name="rating" value="4">
+            <label class="star" for="star2"></label>
+            <input type="radio" id="star3" name="rating" value="3">
+            <label class="star" for="star3"></label>
+            <input type="radio" id="star4" name="rating" value="2">
+            <label class="star" for="star4"></label>
+            <input type="radio" id="star5" name="rating" value="1">
+            <label class="star" for="star5"></label>
+            <label class="star-always"></label>
+        </div>
+        <p style="text-align: center;">אם יש לך עצה לשיפור או שימור, נשמח אם תכתבי לנו</p>
+        <textarea id="userFeedback" name="user_feedback" rows="4" cols="50" style="display: block; margin: 0 auto;"></textarea>
+        <input type="hidden" name="user_id" value="{{ session['email'] }}">
+        <input type="hidden" name="user_first_name" value="{{ session['first_name'] }}">
+        <input type="hidden" id="user_type" name="user_type" value="{{ session['user_type'] }}">
+        <button type="button" class="submit-btn" onclick="sendRating()">שלח</button>
+        <button type="button" class="back-btn" onclick="goBack()">חזור</button>
+    </div>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var userType = document.getElementById('user_type').value;
+        if (!userType) {
+            fetch('/get_user_type')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.user_type) {
+                        document.getElementById('user_type').value = data.user_type;
+                        console.log("User Type on load:", data.user_type);
+                    } else {
+                        console.error("Error fetching user type:", data.error);
+                    }
+                });
+        } else {
+            console.log("User Type on load:", userType);
+        }
+    });
+
+    function goBack() {
+        var userType = document.getElementById('user_type').value;
+        console.log("User Type on goBack:", userType);
+        if (userType === "User") {
+            window.location.href = "/main_user_page";
+        } else if (userType === "Contact") {
+            window.location.href = "/main_contact";
+        } else if (userType === "Volunteer") {
+            window.location.href = "/main_volunteer_page";
+        } else {
+            console.error("Unknown user type:", userType);
+        }
+    }
+
+    function sendRating() {
+        var rating = document.querySelector('input[name="rating"]:checked').value;
+        var userType = document.getElementById('user_type').value;
+        var userFirstName = "{{ session['first_name'] }}";
+        var userFeedback = document.getElementById('userFeedback').value;
+        console.log("Sending rating:", rating, "User Type:", userType, "User First Name:", userFirstName, "Feedback:", userFeedback);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/user_rating', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    alert('הדירוג נשמר בהצלחה!');
+                    goBack();
+                } else {
+                    var response = JSON.parse(xhr.responseText);
+                    console.error(response.error, response.details);
+                    alert('אירעה שגיאה בעת שמירת הדירוג. אנא נסו שוב מאוחר יותר.');
+                }
+            }
+        };
+        xhr.send('rating=' + rating + '&user_type=' + userType + '&user_first_name=' + userFirstName + '&user_feedback=' + encodeURIComponent(userFeedback));
+    }
+
+    console.log("Script loaded. Functions goBack and sendRating are defined.");
+</script>
+</body>
+</html>

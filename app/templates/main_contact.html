@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>עמוד איש קשר ראשי</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body dir="rtl">
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="תיאור התמונה" width="320" height="100">
+        <h2>התנדבות מצילה חיים</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <h3>ברוך הבא, {{ contact_info.first_name }} {{ contact_info.last_name }}</h3>
+
+        <button class="redirect-button" onclick="redirectToUserRating()">דירוג חווית משתמש</button>
+                <button class="redirect-button" onclick="redirectToUserupdateprofile()">עדכון פרטי איש קשר</button>
+        <button class="redirect-button" onclick="redirectToUserpassword()">עדכון סיסמא</button>
+        <button class="button_final" onclick="logout()">התנתקות</button>
+    </div>
+
+    <script>
+        function redirectToCallRate() {
+            window.location.href = "{{ url_for('call_rate_contact') }}";
+        }
+
+        function logout() {
+            window.location.href = "{{ url_for('user_login') }}";
+        }
+
+        function redirectToUserRating() {
+            window.location.href = "{{ url_for('user_rating') }}";
+        }
+
+                function redirectToUserupdateprofile() {
+            window.location.href = "update_contact";
+        }
+        function redirectToUserpassword() {
+            window.location.href = "change_password";
+        }
+    </script>
+</body>
+</html>

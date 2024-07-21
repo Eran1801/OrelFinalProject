@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Quiz Report</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .volunteer-details {
+            margin-top: 20px;
+        }
+
+        .volunteer-details td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .volunteer-details th {
+            text-align: left;
+            padding: 8px;
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div class="container2" align="center">
+    <img src="{{ url_for('static', filename='logo2.png') }}" alt="Description of the image" width="320" height="100">
+        <h1>Trust Quiz Report</h1>
+        <div class="volunteer-details" align="center">
+            <table>
+                {% if volunteer_details %}
+                <tr>
+                    <th> List ID</th>
+                    <td>{{ volunteer_details[0] }}</td>
+                </tr>
+                <tr>
+                    <th>Volunteer ID</th>
+                    <td>{{ volunteer_details[1] }}</td>
+                </tr>
+                <tr>
+                    <th>Volunteered Before</th>
+                    <td>{{ volunteer_details[2] }}</td>
+                </tr>
+                <tr>
+                    <th>Previous Organization</th>
+                    <td>{{ volunteer_details[3] }}</td>
+                </tr>
+                <tr>
+                    <th>Age</th>
+                    <td>{{ volunteer_details[4] }}</td>
+                </tr>
+                <tr>
+                    <th>Occupation</th>
+                    <td>{{ volunteer_details[5] }}</td>
+                </tr>
+                <tr>
+                    <th>Emotional Resilience</th>
+                    <td>{{ volunteer_details[6] }}</td>
+                </tr>
+                <tr>
+                    <th>Coping Strategy</th>
+                    <td>{{ volunteer_details[7] }}</td>
+                </tr>
+                <tr>
+                    <th>Availability</th>
+                    <td>{{ volunteer_details[8] }}</td>
+                </tr>
+                <tr>
+                    <th>Confidentiality Ability</th>
+                    <td>{{ volunteer_details[9] }}</td>
+                </tr>
+                <tr>
+                    <th>Relevant Skills</th>
+                    <td>{{ volunteer_details[10] }}</td>
+                </tr>
+                <tr>
+                    <th>Skills Details</th>
+                    <td>{{ volunteer_details[11] }}</td>
+                </tr>
+                <tr>
+                    <th>Past Pressures</th>
+                    <td>{{ volunteer_details[12] }}</td>
+                </tr>
+                <tr>
+                    <th>Pressure Details</th>
+                    <td>{{ volunteer_details[13] }}</td>
+                </tr>
+                <tr>
+                    <th>Substance Abuse</th>
+                    <td>{{ volunteer_details[14] }}</td>
+                </tr>
+                <tr>
+                    <th>Police Record</th>
+                    <td>{{ volunteer_details[15] }}</td>
+                </tr>
+                <tr>
+                    <th>Police Record Details</th>
+                    <td>{{ volunteer_details[16] }}</td>
+                </tr>
+                <tr>
+                    <th>Emergency Disclosure</th>
+                    <td>{{ volunteer_details[17] }}</td>
+                </tr>
+                <tr>
+                    <th>App Understanding</th>
+                    <td>{{ volunteer_details[18] }}</td>
+                </tr>
+                <tr>
+                    <th>App Importance</th>
+                    <td>{{ volunteer_details[19] }}</td>
+                </tr>
+                <tr>
+                    <th>Why Volunteer</th>
+                    <td>{{ volunteer_details[20] }}</td>
+                </tr>
+                {% endif %}
+            </table>
+            <button class="redirect-button2" id="approve-button" onclick="approveQuiz('{{ volunteer_details[1] }}')">אישור מבחן אמינות</button>
+            <button class="redirect-button2" onclick="denyQuiz('{{ volunteer_details[1] }}')">דחיית מבחן אמינות</button>
+            <button class="redirect-button2" onclick="redirectToNewVolunteers()">חזור</button>
+            <img src="{{ url_for('static', filename='amuta.png') }}" alt="Description of the image" width="200" height="200">
+        </div>
+    </div>
+
+ <script>
+        function redirectToNewVolunteers() {
+            window.location.href = "new_volunteers";  // Change to the correct page path
+        }
+
+        function approveQuiz(volunteerId) {
+            updateVolunteerStatus(volunteerId, 'CHECKED');
+        }
+
+        function denyQuiz(volunteerId) {
+            updateVolunteerStatus(volunteerId, 'DENIED');
+        }
+
+        function updateVolunteerStatus(volunteerId, newStatus) {
+            console.log("Updating status for Volunteer ID:", volunteerId);
+            console.log("New Status:", newStatus);
+
+            fetch('/trust_quiz_report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({volunteer_id: volunteerId, new_status: newStatus})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+                alert(data.message);  // Show success message
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update status');  // Show error message
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteers Hours Summary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .center-table {
+            margin: 0 auto; /* Center the container horizontally */
+            width: fit-content; /* Set the width to fit the content */
+        }
+    </style>
+</head>
+<body dir="rtl">
+<div class="container2" align="center">
+    <img src="{{ url_for('static', filename='logo2.png') }}" alt="Description of the image" width="320" height="100">
+    <h2>Volunteers Hours Summary</h2>
+    <div class="center-table"> <!-- New container for centering the table -->
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Total Hours</th> <!-- Adjusted column header -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td> <!-- Display total hours -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <button class="redirect-button3" onclick="redirectToMainAssociation()">חזור</button>
+    <img src="{{ url_for('static', filename='amuta.png') }}" alt="Description of the image" width="200" height="200">
+</div>
+<script>
+    function redirectToMainAssociation() {
+        window.location.href = "main_association";
+    }
+</script>
+</body>
+</html>

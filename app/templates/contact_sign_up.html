@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הרשמה</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Additional styles for the popup */
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: white;
+            border: 1px solid #ccc;
+            z-index: 1000;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .popup button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body dir="rtl">
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="תיאור של התמונה" width="320" height="100">
+        <h2>ברוכים הבאים לחנות שלנו</h2>
+        <h3>רישום איש קשר</h3>
+        {% if error_message %}
+        <script>
+            alert("{{ error_message }}");
+        </script>
+        {% endif %}
+        <form action="{{ url_for('contact_sign_up') }}" method="post" onsubmit="return validateForm()">
+            <input type="hidden" name="ID" value="...">
+            <input type="hidden" name="UserID" value="...">
+            <div class="input-container">
+                <input type="text" name="First_Name" placeholder="שם פרטי" required>
+            </div>
+            <div class="input-container">
+                <input type="text" name="Last_Name" placeholder="שם משפחה" required>
+            </div>
+            <input type="text" name="Phone_Number" id="Phone_Number" placeholder="נייד" required>
+            <div id="phoneError" style="color: red;"></div>
+            <div class="input-container">
+                <input type="email" name="Email" placeholder="כתובת מייל" required>
+            </div>
+            <div class="input-container">
+                <input type="password" name="Password" id="Password" placeholder="סיסמא" required>
+            </div>
+            <div class="input-container">
+                <input type="password" name="Confirm_Password" id="Confirm_Password" placeholder="אימות סיסמא" required>
+            </div>
+            <div id="passwordError" style="color: red;"></div>
+            <button class="redirect-button" type="button" onclick="showTermsPopup()">תקנון</button>
+            <div class="button-container">
+                <input type="checkbox" id="termsCheckbox" required>
+                <label for="termsCheckbox">קראתי ואני מסכים/ה לתנאי השימוש</label>
+            </div>
+            <button class="redirect-button1" type="submit">הרשמה</button>
+            <div class="button-container">
+                <button class="button_final" type="button" onclick="redirectToLogin()">כבר רשומ/ה? התחבר/י</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="popup-overlay" id="popupOverlay"></div>
+    <div class="popup" id="popup">
+        <p id="popupMessage"></p>
+        <button onclick="closePopup()">סגור</button>
+    </div>
+
+    <script>
+        function showTermsPopup() {
+            const message = "טקסט תקנון כאן"; // Replace with actual terms text
+            showPopup(message);
+        }
+
+        function redirectToLogin() {
+            window.location.href = "{{ url_for('user_login') }}";
+        }
+
+        function validateForm() {
+            const password = document.getElementById('Password').value;
+            const confirmPassword = document.getElementById('Confirm_Password').value;
+            const passwordError = document.getElementById('passwordError');
+
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasNumber = /\d/.test(password);
+
+            if (password.length < 6) {
+                passwordError.textContent = 'הסיסמא חייבת להכיל לפחות 6 תווים.';
+                return false;
+            }
+
+            if (!hasUpperCase || !hasLowerCase || !hasNumber) {
+                passwordError.textContent = 'הסיסמא חייבת להכיל לפחות אות גדולה באנגלית, אות קטנה באנגלית וספרות.';
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                passwordError.textContent = 'הסיסמאות אינן תואמות.';
+                return false;
+            }
+
+            passwordError.textContent = '';
+            return true;
+        }
+
+        const phoneInput = document.getElementById('Phone_Number');
+        const phoneError = document.getElementById('phoneError');
+
+        phoneInput.addEventListener('input', function() {
+            const phonePattern = /^[0-9-]+$/;
+            const inputValue = phoneInput.value.trim();
+
+            if (!phonePattern.test(inputValue)) {
+                phoneError.textContent = 'יש להזין מספרים בלבד';
+                phoneInput.setCustomValidity('יש להזין מספרים בלבד');
+            } else {
+                phoneError.textContent = '';
+                phoneInput.setCustomValidity('');
+            }
+        });
+
+        function showPopup(message) {
+            document.getElementById('popupMessage').innerText = message;
+            document.getElementById('popupOverlay').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popupOverlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>

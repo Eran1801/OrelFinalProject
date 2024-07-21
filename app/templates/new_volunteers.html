@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Volunteers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body dir="rtl">
+<div class="container2" align="center">
+    <img src="{{ url_for('static', filename='logo2.png') }}" alt="Description of the image" width="320" height="100">
+
+    <h2>New Volunteers</h2>
+    <table align="center">
+        <tr>
+            <th>ID</th>  <!-- החלפת שם השדה -->
+            <th>First Name</th>  <!-- החלפת שם השדה -->
+            <th>Last Name</th>
+            <th>Test</th><!-- החלפת שם השדה -->
+        </tr>
+        <tbody>
+        {% for row in rows %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td><button class="redirect-button3" onclick="redirectToTrustQuizReport('{{ row[0] }}')">צפייה</button></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        <!-- Add more rows as needed -->
+    </table>
+    <img src="{{ url_for('static', filename='amuta.png') }}" alt="Description of the image" width="200" height="200">
+</div>
+
+<script>
+        function redirectToTrustQuizReport(ID) {
+            window.location.href = "trust_quiz_report?ID=" + ID;
+        }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>רשימת אנשי קשר</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container" id="contact-container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="תיאור התמונה" width="320" height="100">
+        <h2>רשימת אנשי קשר</h2>
+        {% if contacts %}
+            <table id="contact-table">
+                <thead>
+                    <tr>
+                        <th>שם פרטי</th>
+                        <th>שם משפחה</th>
+                        <th>אימייל</th>
+                        <th>מספר טלפון</th>
+                        <th>פעולות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact in contacts %}
+                        <tr>
+                            <td>{{ contact[2] }}</td>
+                            <td>{{ contact[3] }}</td>
+                            <td>{{ contact[5] }}</td>
+                            <td>{{ contact[4] }}</td>
+                            <td>
+                                <button onclick="deleteContact('{{ contact[5] }}')">מחק איש קשר</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>אין אנשי קשר זמינים.</p>
+        {% endif %}
+
+        <button onclick="window.location.href='{{ url_for('create_contact') }}'">הוספת איש קשר</button>
+        <button onclick="window.location.href='{{ url_for('main_user_page') }}'">חזרה לעמוד הראשי</button>
+    </div>
+
+    <script>
+        function deleteContact(email) {
+            if (confirm('האם אתה בטוח שברצונך למחוק איש קשר זה?')) {
+                fetch('/delete_contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('איש הקשר נמחק בהצלחה.');
+                        location.reload();
+                    } else {
+                        alert('אירעה שגיאה במחיקת איש הקשר.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting contact:', error);
+                    alert('אירעה שגיאה במחיקת איש הקשר.');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

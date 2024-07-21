@@ -1,0 +1,38 @@
+<!-- call_rate.html -->
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דירוג שיחה</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body dir="rtl">
+    <div class="container">
+        <h2>דירוג שיחה</h2>
+<div class="container">
+    <form id="ratingForm" action="/submit_rating" method="post">
+        <div class="star-container">
+            <input type="radio" id="star5" name="rating" value="5">
+            <label class="star" for="star5"></label>
+            <input type="radio" id="star4" name="rating" value="4">
+            <label class="star" for="star4"></label>
+            <input type="radio" id="star3" name="rating" value="3">
+            <label class="star" for="star3"></label>
+            <input type="radio" id="star2" name="rating" value="2">
+            <label class="star" for="star2"></label>
+            <input type="radio" id="star1" name="rating" value="1">
+            <label class="star" for="star1"></label>
+        </div>
+        <button type="submit" class="submit-btn">שלח</button>
+        <button type="button" class="back-btn" onclick="goBack()">חזור</button>
+    </form>
+    </div>
+    <script>
+        function goBack() {
+            window.location.href = "main_contact";
+        }
+    </script>
+</body>
+</html>

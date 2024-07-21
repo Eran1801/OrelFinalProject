@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דרג את השיחה</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .rating {
+            display: flex;
+            justify-content: center;
+            direction: rtl;
+            font-size: 40px;
+        }
+
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            cursor: pointer;
+            color: #ccc;
+        }
+
+        .rating input:checked ~ label,
+        .rating input:hover ~ label,
+        .rating input:hover ~ label ~ label {
+            color: #ffc700;
+        }
+
+        .notes {
+            margin-top: 20px;
+        }
+
+        .submit-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>דרג את השיחה</h1>
+        <form action="{{ url_for('call_rate_user', call_id=call_id) }}" method="post">
+            <div class="rating">
+                <input type="radio" name="rating" id="star5" value="5"><label for="star5">☆</label>
+                <input type="radio" name="rating" id="star4" value="4"><label for="star4">☆</label>
+                <input type="radio" name="rating" id="star3" value="3"><label for="star3">☆</label>
+                <input type="radio" name="rating" id="star2" value="2"><label for="star2">☆</label>
+                <input type="radio" name="rating" id="star1" value="1"><label for="star1">☆</label>
+            </div>
+            <button type="submit" class="submit-button">שלח דירוג</button>
+        </form>
+    </div>
+</body>
+</html>

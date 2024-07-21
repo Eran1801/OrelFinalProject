@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שעות פעילות מתנדב</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body dir="rtl">
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Description of the image" width="320" height="100">
+        <h2>שעות פעילות מתנדב</h2>
+        <button id="statusButton" onclick="toggleVolunteerStatus()">ON</button>
+        <div id="timeDisplay"></div>
+        <button class="redirect-button" onclick="redirectToMainVolunteerPage()">חזרה לעמוד הראשי</button>
+    </div>
+
+    <script>
+        var startTime;
+        var isVolunteering = false;
+        var timeDisplay = document.getElementById("timeDisplay");
+        var statusButton = document.getElementById("statusButton");
+
+        function toggleVolunteerStatus() {
+            if (isVolunteering) {
+                isVolunteering = false;
+                statusButton.innerText = "ON";
+                updateTimeDisplay();
+            } else {
+                isVolunteering = true;
+                statusButton.innerText = "OFF";
+                startTime = new Date();
+                updateTimeDisplay();
+                setInterval(updateTimeDisplay, 1000);
+            }
+        }
+
+        function updateTimeDisplay() {
+            if (isVolunteering) {
+                var currentTime = new Date();
+                var elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+                var hours = Math.floor(elapsedSeconds / 3600);
+                var minutes = Math.floor((elapsedSeconds % 3600) / 60);
+                var seconds = elapsedSeconds % 60;
+                timeDisplay.innerText = hours + " שעות, " + minutes + " דקות, " + seconds + " שניות";
+            } else {
+                timeDisplay.innerText = "";
+            }
+        }
+
+        function redirectToMainVolunteerPage() {
+            window.location.href = "main_volunteer_page";
+        }
+    </script>
+</body>
+</html>

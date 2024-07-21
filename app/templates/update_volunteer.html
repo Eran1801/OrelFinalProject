@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>עדכון פרטי מתנדב</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+        }
+        .container {
+            width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="text"], input[type="email"] {
+            width: calc(100% - 16px);
+            padding: 8px;
+            margin: 8px;
+            box-sizing: border-box;
+        }
+        .redirect-button {
+            background-color: #FFD1Dc;
+            color: #000;
+            font-weight: bold;
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .redirect-button:hover {
+            background-color: #FFA1A1;
+        }
+        .message {
+            margin: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #DFF2BF;
+            border: 1px solid #4F8A10;
+            color: #4F8A10;
+        }
+        .error {
+            background-color: #FFBABA;
+            border: 1px solid #D8000C;
+            color: #D8000C;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="תיאור של התמונה" width="320" height="100">
+        <h2>עדכון פרטי מתנדב</h2>
+        <form id="update-form" method="POST" action="{{ url_for('update_volunteer') }}">
+            <table>
+                <tr>
+                    <th>שדה</th>
+                    <th>שם שדה</th>
+                    <th>עדכון</th>
+                </tr>
+                <tr>
+                    <td>שם פרטי</td>
+                    <td>{{ volunteer_data[1] }}</td>
+                    <td><input type="text" name="first_name" value="{{ volunteer_data[1] }}" placeholder="עדכן שם פרטי"></td>
+                </tr>
+                <tr>
+                    <td>שם משפחה</td>
+                    <td>{{ volunteer_data[2] }}</td>
+                    <td><input type="text" name="last_name" value="{{ volunteer_data[2] }}" placeholder="עדכן שם משפחה"></td>
+                </tr>
+                <tr>
+                    <td>מייל</td>
+                    <td>{{ volunteer_data[4] }}</td>
+                    <td>
+                        <input type="email" name="email" value="{{ volunteer_data[4] }}" placeholder="עדכן מייל" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="אנא הכנס מייל תקני">
+                        <span class="error-message" id="email-error">אנא הכנס מייל תקני</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>נייד</td>
+                    <td>{{ volunteer_data[3] }}</td>
+                    <td>
+                        <input type="text" name="phone_number" value="{{ volunteer_data[3] }}" placeholder="עדכן נייד" pattern="\d*" title="הזיני מספרים בלבד">
+                        <span class="error-message" id="phone-error">הזיני מספרים בלבד</span>
+                    </td>
+                </tr>
+            </table>
+            <div class="form-actions">
+                <button type="submit" class="redirect-button">עדכן</button>
+                <button type="button" class="redirect-button" onclick="redirectTomain()">חזור לעמוד הראשי</button>
+            </div>
+        </form>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+                <li class="{{ category }} message">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <script>
+        function redirectTomain() {
+                    window.location.href = "{{ url_for('main_volunteer_page') }}";
+
+        }
+
+        document.getElementById('update-form').addEventListener('input', function (e) {
+            const emailInput = e.target.closest('input[name="email"]');
+            const phoneInput = e.target.closest('input[name="phone_number"]');
+            if (emailInput) {
+                emailInput.setCustomValidity('');
+                if (!emailInput.validity.valid) {
+                    document.getElementById('email-error').style.display = 'block';
+                } else {
+                    document.getElementById('email-error').style.display = 'none';
+                }
+            }
+            if (phoneInput) {
+                phoneInput.setCustomValidity('');
+                if (!phoneInput.validity.valid) {
+                    document.getElementById('phone-error').style.display = 'block';
+                } else {
+                    document.getElementById('phone-error').style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

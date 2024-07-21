@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>רשימת מתנדבים</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body dir="rtl">
+    <div class="container">
+        <h2>רשימת מתנדבים</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                <th>ID</th>
+                    <th>first_name</th>
+                    <th>last_name</th>
+                    <th>phone_number</th>
+                    <th>email</th>
+                    <th>password</th>
+                    <th>registration_date</th> <!-- נוסף -->
+                    <th>test_status</th> <!-- נוסף -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>{{ row[0] }}</td> <!-- סידור האינדקסים -->
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td> <!-- הוספת עמודה חדשה -->
+                    <td>{{ row[6] }}</td> <!-- הוספת עמודה חדשה -->
+                    <td>{{ row[7] }}</td> <!-- הוספת עמודה חדשה -->
+
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

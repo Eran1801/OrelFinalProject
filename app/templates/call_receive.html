@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שיחה נכנסת</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body dir="rtl">
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="תיאור של התמונה" width="320" height="100">
+        <h1>שיחה נכנסת מ<span id="userFirstName"></span></h1>
+        <button class="button_final" onclick="acceptCall()">קבל שיחה</button>
+        <button class="button_final" onclick="rejectCall()">דחה שיחה</button>
+    </div>
+
+    <script>
+    // שמירת נתוני הסשן כמשתנה JavaScript
+    const sessionData = {{ session|tojson }};
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const params = new URLSearchParams(window.location.search);
+        const userFirstName = params.get('user_first_name');
+        console.log(`Incoming call from: ${userFirstName}`);  // לוג שם משתמש
+        document.getElementById('userFirstName').textContent = userFirstName;
+        console.log('Session data on call_receive:', sessionData);
+    });
+
+    function acceptCall() {
+        fetch('/accept_call', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: sessionData.email })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // לוג תגובת השרת
+            if (data.success) {
+                console.log(`Call accepted with Call ID: ${data.call_id}`);  // לוג קבלת שיחה
+                window.location.href = "/call_ongoing_volunteer?call_id=" + data.call_id;
+            } else {
+                console.error('Error accepting call:', data.error);
+                alert('Error accepting call: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error accepting call:', error);
+        });
+    }
+
+    function rejectCall() {
+        fetch('/reject_call', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // לוג תגובת השרת
+            if (data.success) {
+                console.log('Call rejected successfully');  // לוג דחיית שיחה
+                alert('Call rejected successfully');
+                window.location.href = "/main_volunteer_page";
+            } else {
+                console.error('Error rejecting call:', data.error);
+                alert('Error rejecting call: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error rejecting call:', error);
+        });
+    }
+    </script>
+</body>
+</html>

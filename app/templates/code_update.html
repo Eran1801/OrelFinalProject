@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>עדכון מילת הקוד</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Optional CSS for audio player appearance */
+        #audioPlayback {
+            background-color: #f2f2f2; /* Default background color */
+        }
+        .audio-cleared {
+            background-color: #ddd; /* Changed background color to indicate cleared state */
+        }
+    </style>
+</head>
+<body dir="rtl">
+  <div class="container">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Description of the image" width="320" height="100">
+    <h3>כדי לעדכן את מילת הקוד שלך, נא לכתוב אותה ולאחר מכן להקליט אותה באופן ברור</h3>
+    <form id="updateForm" action="/code_update" method="post" onsubmit="return showPopup()">
+        <textarea name="written_code" rows="2" cols="30" required></textarea><br><br>
+        <button type="button" onclick="startRecording()" id="startButton">התחל הקלטה</button>
+        <button type="button" onclick="stopRecording()" id="stopButton" disabled>עצור הקלטה</button>
+        <button type="button" onclick="clearRecording()" id="clearButton" disabled>נקה והקלט מחדש</button><br><br>
+        <audio controls id="audioPlayback" class="audio-player" required></audio><br><br>
+        <input type="hidden" id="audioBlob" name="audio_blob">
+        <button class="redirect-button" type="submit">עדכון מילת קוד</button>
+        <button type="button" class="button_final" onclick="goToSignUp()">חזרה לעמוד ראשי</button>
+    </form>
+  </div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let audioUrl;
+        let recordingStarted = false;
+
+        function startRecording() {
+            recordingStarted = true;
+            document.getElementById('startButton').disabled = true;
+            document.getElementById('stopButton').disabled = false;
+            document.getElementById('clearButton').disabled = false;
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function(stream) {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = function(event) {
+                        audioChunks.push(event.data);
+                    }
+                    mediaRecorder.start();
+                })
+                .catch(function(err) {
+                    console.error('Unable to access microphone', err);
+                });
+        }
+
+        function stopRecording() {
+            mediaRecorder.stop();
+            mediaRecorder.onstop = function() {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                audioUrl = URL.createObjectURL(audioBlob);
+                const audioElement = document.getElementById('audioPlayback');
+                audioElement.src = audioUrl;
+
+                // Convert audio blob to Base64 and set it to hidden input
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    document.getElementById('audioBlob').value = reader.result;
+                }
+                reader.readAsDataURL(audioBlob);
+
+                // Enable clear button after stopping recording
+                document.getElementById('clearButton').disabled = false;
+
+                // Enable/disable other buttons as needed
+                document.getElementById('startButton').disabled = false;
+                document.getElementById('stopButton').disabled = true;
+            }
+            event.preventDefault(); // Prevent form submission
+        }
+
+        function clearRecording() {
+            audioChunks = [];  // Clear the audio chunks array
+            const audioElement = document.getElementById('audioPlayback');
+            audioElement.src = "";  // Clear the audio playback
+
+            // Visual indication: change class or background color
+            audioElement.classList.add('audio-cleared');
+
+            if (mediaRecorder && (mediaRecorder.state === "recording" || mediaRecorder.state === "paused")) {
+                mediaRecorder.stop();  // Stop the media recorder if it's recording or paused
+            }
+
+            document.getElementById('startButton').disabled = false;
+            document.getElementById('stopButton').disabled = true;
+            document.getElementById('clearButton').disabled = true;
+        }
+
+        function showPopup() {
+            const form = document.getElementById('updateForm');
+            if (form.checkValidity()) {
+                alert("מילת הקוד עודכנה בהצלחה");
+                return true;
+            } else {
+                alert("אנא מלא את כל השדות הנדרשים");
+                return false;  // Add this line to prevent form submission
+            }
+        }
+
+        function goToSignUp() {
+            window.location.href = "{{ url_for('main_user_page') }}";
+        }
+    </script>
+</body>
+</html>

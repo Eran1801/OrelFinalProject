@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Report</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Additional CSS to adjust table layout */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body dir="rtl">
+<div class="container1" align="center">
+    <img src="{{ url_for('static', filename='logo2.png') }}" alt="Description of the image" width="320" height="100">
+    <h2>משתמשות האפליקציה </h2>
+    <table>
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>App Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button class="redirect-button3" onclick="redirectToMainAssocoation()">חזור</button>
+    <img src="{{ url_for('static', filename='amuta.png') }}" alt="Description of the image" width="200" height="200">
+</div>
+<script>
+    function redirectToMainAssocoation() {
+        window.location.href = "main_association";
+    }
+</script>
+</body>
+</html>

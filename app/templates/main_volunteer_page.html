@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Volunteer Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        #timerContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .clock {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: #FFD1DC; /* ורוד */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            text-transform: uppercase;
+            position: relative;
+            cursor: pointer;
+        }
+        #timeDisplay {
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .clock span {
+            font-size: 28px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body dir="rtl">
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="תיאור של התמונה" width="320" height="100">
+        <h2>התנדבות מצילה חיים</h2>
+        <h3>תודה על תרומתך, {{ volunteer_first_name }}</h3>
+
+        <!-- שעון התנדבות -->
+        <div id="timerContainer">
+            <div class="clock" id="statusButton" onclick="toggleTimer()">{{ 'OFF' if session.get('is_timing') else 'ON' }}</div>
+            <div id="timeDisplay"></div>
+        </div>
+
+        <!-- כפתורים נוספים -->
+        <button class="redirect-button" onclick="redirectToVolunteerHours()">שעות הפעילות שלי</button>
+        <button class="redirect-button" onclick="redirectToQuiz()">מבחן אמינות</button>
+        <button class="redirect-button" onclick="redirectToUserRating()">דירוג חווית משתמש</button>
+        <button class="redirect-button" onclick="redirectToUserupdateprofile()">עדכון פרטי מתנדב</button>
+        <button class="redirect-button" onclick="redirectToUserpassword()">עדכון סיסמא</button>
+        <button class="button_final" onclick="logout()">התנתקות</button>
+    </div>
+
+    <script>
+        var startTime;
+        var isTiming = "{{ 'true' if session.get('is_timing') else 'false' }}";
+        isTiming = (isTiming === 'true'); // Convert the string to boolean
+        var timeDisplay = document.getElementById("timeDisplay");
+        var statusButton = document.getElementById("statusButton");
+
+        function toggleTimer() {
+            var testStatus = "{{ test_status }}";
+            if (testStatus === "CHECKED") {
+                if (isTiming) {
+                    stopTimer();
+                } else {
+                    startTimer();
+                }
+            } else {
+                alert("תוכל להזין שעות פעילות רק לאחר אישור מבחן האמינות");
+            }
+        }
+
+        function startTimer() {
+            isTiming = true;
+            statusButton.innerText = "OFF";
+            startTime = new Date();
+            updateTimeDisplay();
+            setInterval(updateTimeDisplay, 1000);
+
+            console.log("Calling startTimer()...");
+            $.ajax({
+                url: '/start_volunteering',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ email: "{{ session.email }}" }),
+                success: function(response) {
+                    console.log(response.message);
+                    alert("התנדבות התחילה בהצלחה.");
+                },
+                error: function(error) {
+                    console.error(error.responseJSON.error);
+                    alert("שגיאה בהתחלת התנדבות. נסה שוב מאוחר יותר.");
+                }
+            });
+
+            checkForIncomingCalls(); // Check for incoming calls when the timer starts
+        }
+
+        function stopTimer() {
+            isTiming = false;
+            statusButton.innerText = "ON";
+            updateTimeDisplay();
+
+            console.log("Calling stopTimer()...");
+            $.ajax({
+                url: '/stop_volunteering',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ email: "{{ session.email }}" }),
+                success: function(response) {
+                    console.log(response.message);
+                    alert("התנדבות הופסקה בהצלחה.");
+                },
+                error: function(error) {
+                    console.error(error.responseJSON.error);
+                    alert("שגיאה בעצירת התנדבות. נסה שוב מאוחר יותר.");
+                }
+            });
+        }
+
+        function updateTimeDisplay() {
+            if (isTiming) {
+                var currentTime = new Date();
+                var elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+                var hours = Math.floor(elapsedSeconds / 3600);
+                var minutes = Math.floor((elapsedSeconds % 3600) / 60);
+                var seconds = elapsedSeconds % 60;
+                timeDisplay.innerText = hours + " שעות, " + minutes + " דקות, " + seconds + " שניות";
+            } else {
+                timeDisplay.innerText = "";
+            }
+        }
+
+        function redirectToVolunteerHours() {
+            window.location.href = "volunteer_hours_report";
+        }
+
+        function redirectToQuiz() {
+            window.location.href = "volunteer_trust_quiz";
+        }
+
+        function redirectToUserRating() {
+            var testStatus = "{{ test_status }}";
+            if (testStatus === "CHECKED") {
+                window.location.href = "user_rating";
+            } else {
+                alert("תוכל לדרג אותנו רק לאחר אישור מבחן האמינות");
+            }
+        }
+
+        function logout() {
+            window.location.href = "user_login";
+        }
+
+        function redirectToUserupdateprofile() {
+            window.location.href = "update_volunteer";
+        }
+
+        function redirectToUserpassword() {
+            window.location.href = "change_password";
+        }
+
+        function checkForIncomingCalls() {
+            if (isTiming) {
+                setInterval(() => {
+                    fetch('/check_for_incoming_call', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ volunteer_id: '{{ session.user_id }}' })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.incoming_call) {
+                            window.location.href = "/call_receive?user_first_name=" + data.user_first_name;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }, 2000); // Check every 2 seconds
+            }
+        }
+    </script>
+</body>
+</html>

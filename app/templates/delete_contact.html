@@ -1,0 +1,55 @@
+@app.route('/delete_contact', methods=['POST'])
+def delete_contact():
+    if 'email' in session:
+        email = session['email']
+        conn = get_db()
+        cursor = conn.cursor()
+
+        # Fetch user ID from Users table
+        cursor.execute("SELECT ID FROM Users WHERE email=?", (email,))
+        user_data = cursor.fetchone()
+        if not user_data:
+            cursor.close()
+            print("User details not found. Please complete registration first.")  # Print detailed error
+            return "User details not found. Please complete registration first.", 404
+
+        user_id = user_data[0]
+
+        # Get email of contact to delete from POST request
+        contact_email = request.json.get('email')
+
+        if not contact_email:
+            cursor.close()
+            print("Contact email not provided.")  # Print detailed error
+            return "Contact email not provided.", 400
+
+        # Check if contact exists for this user
+        cursor.execute("SELECT ID FROM contact_list WHERE UserID=? AND email=?", (user_id, contact_email))
+        contact_data = cursor.fetchone()
+        if not contact_data:
+            cursor.close()
+            error_msg = f"Contact with email '{contact_email}' not found for the current user."
+            print(error_msg)  # Print detailed error
+            return error_msg, 404
+
+        contact_id = contact_data[0]
+
+        try:
+            # Update is_active status in contact_list table
+            cursor.execute("UPDATE contact_list SET is_active=0 WHERE ID=?", (contact_id,))
+
+            # Delete from login_type table based on email
+            cursor.execute("DELETE FROM login_type WHERE email=?", (contact_email,))
+
+            conn.commit()
+            cursor.close()
+            print(f"Deleted contact with email '{contact_email}' successfully.")  # Print success message
+            return jsonify({"success": True}), 200
+        except Exception as e:
+            conn.rollback()
+            cursor.close()
+            error_msg = f"Error deleting contact with email '{contact_email}': {str(e)}"
+            print(error_msg)  # Print detailed error
+            return jsonify({"success": False, "error": error_msg}), 500
+    else:
+        return redirect(url_for('user_login'))

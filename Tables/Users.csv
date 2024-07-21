@@ -1,0 +1,11 @@
+ID,ContactID,password,first_name,last_name,phone_number,email,registration_date,last_login_date,account_status,Rating
+1,1,MayCo#123,Maya,Cohen,501234567,mayco123@example.com,01/01/2023,30:00.0,Active,2
+2,2,NoaLev_22,Noa,Levy,522345678,noalev_22@email.com,02/01/2023,45:00.0,Active,5
+3,3,TamarMi!88,Tamar,Mizrahi,533456789,tamar_mi88@example.net,03/01/2023,15:00.0,Inactive,3
+4,4,ShiraAv_55,Shira,Avraham,544567890,shira_av55@email.org,04/01/2023,20:00.0,Active,2
+5,5,AdiKa@99,Adi,Katz,555678901,adi_ka99@example.com,05/01/2023,00:00.0,Active,5
+6,6,YaelLev_77,Yael,Levi,586789012,yaellev_77@email.net,06/01/2023,30:00.0,Active,4
+7,7,RoniPer_123,Roni,Peretz,727890123,roni_per123@example.org,07/01/2023,45:00.0,Inactive,1
+8,8,NetaGo!1,Neta,Goldstein,778901234,neta_go1@email.com,08/01/2023,00:00.0,Active,4
+9,9,Liora_Sh@p,Liora,Shapira,789012345,liora_sh@p@example.net,09/01/2023,10:00.0,Active,2
+10,10,MichalRo_77,Michal,Rosenberg,790123456,michal_ro77@email.org,10/01/2023,05:00.0,Active,5

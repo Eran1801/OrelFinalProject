@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body dir="rtl">
+    <div class="container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Description of the image" width="320" height="100">
+        <h2>ברוכים הבאים לעמוד הראשי</h2>
+        <h3>בחרו באחת מהאפשרויות:</h3>
+        <button onclick="redirectToUserSignUp()">הרשמה של משתמשת</button>
+        <button onclick="redirectToVolunteerSignUp()">הרשמה של מתנדב</button>
+        <button onclick="redirectToUserLogin()">התחברות משתמש</button>
+    </div>
+
+    <script>
+        function redirectToUserSignUp() {
+            window.location.href = "{{ url_for('user_sign_up') }}";
+        }
+
+        function redirectToVolunteerSignUp() {
+            window.location.href = "{{ url_for('volunteer_sign_up') }}";
+        }
+
+        function redirectToUserLogin() {
+            window.location.href = "{{ url_for('user_login') }}";
+        }
+    </script>
+</body>
+</html>
